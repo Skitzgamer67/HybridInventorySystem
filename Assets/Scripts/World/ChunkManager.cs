@@ -48,6 +48,7 @@ public class ChunkManager : MonoBehaviour
             }
 
             GenerateSurroundingChunks();
+            DespawnDistantChunks();
         }
     }
 
@@ -73,6 +74,28 @@ public class ChunkManager : MonoBehaviour
                     SpawnChunk(targetCoordinates);
                 }
             }
+        }
+    }
+
+    void DespawnDistantChunks()
+    {
+        List<Vector2Int> chunksToRemove = new List<Vector2Int>();
+
+        foreach (KeyValuePair<Vector2Int, GameObject> chunk in generatedChunks)
+        {
+            Vector2Int coordinates = chunk.Key;
+
+            if (Mathf.Abs(coordinates.x - chunkCoordinates.x) > renderDistance ||
+                Mathf.Abs(coordinates.y - chunkCoordinates.y) > renderDistance)
+            {
+                Destroy(chunk.Value);
+                chunksToRemove.Add(coordinates);
+            }
+        }
+
+        foreach (Vector2Int coordinates in chunksToRemove)
+        {
+            generatedChunks.Remove(coordinates);
         }
     }
 }
