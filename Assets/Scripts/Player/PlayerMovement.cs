@@ -11,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody rb;
     private Vector3 movement;
+    private Quaternion targetRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -22,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
         {
             cameraTransform = Camera.main.transform;
         }
+
+        targetRotation = rb.rotation;
     }
 
     // Update is called once per frame
@@ -60,10 +63,26 @@ public class PlayerMovement : MonoBehaviour
         right.Normalize();
 
         movement = (forward * vertical + right * horizontal).normalized;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
+
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            Vector3 mouseWorldPosition = ray.GetPoint(distance);
+            Vector3 lookDirection = mouseWorldPosition - transform.position;
+            lookDirection.y = 0f;
+
+            if (lookDirection.sqrMagnitude > 0.001f)
+            {
+                targetRotation = Quaternion.LookRotation(lookDirection);
+            }
+        }
     }
 
     void FixedUpdate()
     {
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        rb.MoveRotation(targetRotation);
     }
 }
