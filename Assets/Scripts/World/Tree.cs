@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,20 +7,24 @@ using UnityEngine;
 public class Tree : MonoBehaviour
 {
 
-    [SerializeField] public int maxHealth;
-    public int currentHealth;
+    [SerializeField] private int maxHealth;
+    private int currentHealth;
+
+    [SerializeField] private GameObject itemPickupPrefab;
+    [SerializeField] private ItemData wood;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         currentHealth = maxHealth;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            TakeDamage(maxHealth);
+        }
     }
 
     public void TakeDamage(int Damage)
@@ -43,8 +48,15 @@ public class Tree : MonoBehaviour
 
     private void TreeDeath()
     {
+        SpawnItem(wood, Random.Range(5, 10));
         Destroy(gameObject);
-        // SpawnItem(wood, Random.Range(5, 10));
     }
-    
+
+    private void SpawnItem(ItemData item, int quantity)
+    {
+        GameObject droppedItem = Instantiate(itemPickupPrefab, transform.position + Vector3.up * 1f, Quaternion.identity);
+        droppedItem.GetComponent<ItemPickup>().Initialize(item, quantity);
+    }
+
 }
+
