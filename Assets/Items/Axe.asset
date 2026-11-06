@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a92bc6dc5c5de2439875ec1eac77c94, type: 3}
   m_Name: Axe
   m_EditorClassIdentifier: 
-  itemName: Wood Log
+  itemName: Axe
   previewTexture: {fileID: 8400000, guid: d3120e7ef840a0540b077b6b4b29384c, type: 2}
-  worldModel: {fileID: 8549557101226758196, guid: 07d82876887d266469439643fee78a8b,
+  worldModel: {fileID: 919132149155446097, guid: 5ade38570b5e65e47bd32672bc21a131,
     type: 3}
-  weight: 0.5
-  maxStackSize: 50
+  weight: 2.5
+  maxStackSize: 1
   gridSize: {x: 1, y: 2}
-  description: A basic resource collected from trees
+  description: A basic tool to harvest wood
