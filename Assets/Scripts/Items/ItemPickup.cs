@@ -1,5 +1,6 @@
 
 using UnityEngine;
+using TMPro;
 
 public class ItemPickup : MonoBehaviour
 {
@@ -7,6 +8,7 @@ public class ItemPickup : MonoBehaviour
     public int quantity = 1;
 
     [SerializeField] private Transform visual;
+    [SerializeField] private TextMeshPro itemLabel;
 
     [SerializeField] private float pickupRange = 2.5f;
     [SerializeField] private float pickupSpeed = 6f;
@@ -36,10 +38,18 @@ public class ItemPickup : MonoBehaviour
         {
             SpawnModel();
         }
+
+        UpdateLabel();
     }
 
     void Update()
     {
+        if (itemLabel != null && Camera.main != null)
+        {
+            // makes the text face the camera instead of staying at a fixed angle
+            itemLabel.transform.rotation = Camera.main.transform.rotation;
+        }
+
         if (player == null || playerInventory == null || item == null)
         {
             return;
@@ -80,6 +90,7 @@ public class ItemPickup : MonoBehaviour
                     transform.localScale = originalScale;
 
                     retryTime = Time.time + 1f;
+                    UpdateLabel();
                 }
             }
         }
@@ -91,6 +102,7 @@ public class ItemPickup : MonoBehaviour
         quantity = newQuantity;
 
         SpawnModel();
+        UpdateLabel(); // update the text when the item gets dropped
     }
 
     void SpawnModel()
@@ -109,5 +121,22 @@ public class ItemPickup : MonoBehaviour
         }
 
         Instantiate(item.worldModel, visual);
+    }
+
+    void UpdateLabel()
+    {
+        if (itemLabel == null)
+        {
+            return;
+        }
+
+        if (item != null)
+        {
+            itemLabel.text = item.itemName + " x" + quantity;
+        }
+        else
+        {
+            itemLabel.text = "";
+        }
     }
 }
