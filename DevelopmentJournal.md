@@ -108,3 +108,137 @@ I will start by implementing a universal item pickup system that can be used for
 After this, I will begin implementing the inventory's internal functionality, including item storage, stacking, weight limits and grid placement.
 
 The inventory interface and item organisation features, such as dragging and rotating items, will be developed during Sprint 3.
+
+## Sprint 2 — Inventory Backend and Resource Generation
+
+### Development
+
+I started Sprint 2 by implementing the resource drop system that I had planned during Sprint 1.
+
+I created an `ItemPickup` script that can be used for different items rather than creating a separate pickup script for each resource. The script uses the existing `ItemData` assets to determine which item is being dropped and how many are in the stack.
+
+I connected this system to the `Tree` script so that destroying a tree spawns a wood log pickup. The amount of wood dropped is randomly generated between 5 and 9.
+
+I also created an `ItemRotation` script to make dropped items slowly rotate and float up and down using `Mathf.Sin()`.
+
+### Procedural Tree Generation
+
+After implementing resource drops, I expanded the `ChunkManager` script to generate trees alongside the ground tiles.
+
+Initially, I had several trees spawning in each chunk, but this caused the trees to overlap and made the environment look too crowded.
+
+To improve this, I reduced the number of trees per chunk and added a configurable spawn chance. This allows some chunks to generate without trees, making the environment less crowded.
+
+I also added a `worldSeed` variable and used `System.Random` to generate consistent tree positions based on each chunk's coordinates.
+
+This means that trees will appear in the same positions when the player leaves an area and returns.
+
+### Challenges and Problem-Solving
+
+One issue I encountered was that trees would respawn in different positions whenever their chunks were unloaded and generated again.
+
+This also meant that trees which had already been destroyed would reappear when returning to the area.
+
+To fix this, I implemented a `Dictionary<Vector2Int, HashSet<int>>` to track destroyed trees. Each tree is assigned an ID based on its position in the chunk's generation process.
+
+When a tree is destroyed, its ID and chunk coordinates are recorded. The generation system then checks this information before spawning trees.
+
+This allows destroyed trees to remain destroyed when revisiting chunks during the same play session.
+
+### Inventory Backend
+
+I then started implementing the inventory's internal functionality.
+
+I created an `InventorySlot` class to store an item's data, quantity, grid position and rotation.
+
+I also created an `Inventory` script to manage the items stored in the player's inventory.
+
+The inventory uses a configurable grid, currently set to 8 columns and 6 rows. Each item uses its `gridSize` property to determine how much space it occupies.
+
+I implemented a method that checks whether an item can fit at a particular position by comparing its occupied cells with the positions of other items.
+
+I also added item stacking, allowing items of the same type to be combined into existing stacks until their maximum stack size is reached.
+
+### Weight System
+
+I implemented a weight system using the `weight` property from `ItemData`.
+
+The inventory calculates its current weight by multiplying each item's weight by its quantity and adding the results together.
+
+I also added a configurable maximum weight, which is currently set to 50.
+
+When collecting items, the system checks how much weight is available and only adds the quantity that can fit within the limit.
+
+One issue I encountered during testing was that the inventory weight remained at zero even after collecting several wood logs.
+
+I initially thought the calculation was not working, but found that the wood item's weight had not been configured in its ScriptableObject asset.
+
+After setting the weight in Unity's Inspector, the inventory began calculating the total correctly.
+
+### Automatic Item Collection
+
+Initially, the player had to press E while standing near a dropped item to collect it.
+
+I later changed this to an automatic pickup system.
+
+When the player moves within a configurable range, the dropped item moves towards the player using `Vector3.MoveTowards()`.
+
+I also added a shrinking effect so the item gradually becomes smaller while moving towards the player.
+
+Once the item reaches the player, it is added to the inventory and the pickup GameObject is destroyed.
+
+If the inventory cannot hold the entire stack, the remaining items are left on the ground instead.
+
+### Item Pickup Indicators
+
+I also added floating text labels above dropped items using TextMeshPro.
+
+The labels display the item's name and quantity, such as `Wood Log x7`.
+
+The text is generated using the information stored in the item's `ItemData` and the pickup's quantity.
+
+I made the labels face the camera so they remain readable from the game's isometric perspective.
+
+The labels also follow the dropped items during collection and shrink alongside them.
+
+### Testing
+
+I tested the resource drop system by destroying trees and checking that wood logs spawned with different quantities.
+
+I also tested procedural tree generation by moving between chunks and returning to previously visited areas. The trees retained their original positions, and destroyed trees did not respawn.
+
+For the inventory, I collected multiple wood pickups and checked the results using messages printed to Unity's Console.
+
+I confirmed that items of the same type were combined into stacks and that the inventory stored their quantities and grid positions.
+
+I also tested the weight calculation after configuring the wood item's weight.
+
+Finally, I tested automatic collection by approaching dropped items and checking that they moved towards the player, shrank and were added to the inventory without requiring a key press.
+
+### Sprint 2 Reflection
+
+During Sprint 2, I completed the resource drop system and implemented the main backend functionality for the inventory.
+
+One of the main things I learned was how to use dictionaries and unique IDs to keep track of changes to procedurally generated objects.
+
+I also gained more experience with ScriptableObjects by connecting item data to world pickups and inventory storage.
+
+Implementing stacking and weight calculations helped me understand how different inventory restrictions can work together.
+
+I also learned that some problems are caused by incorrect Inspector settings rather than errors in the scripts, as demonstrated by the issue with the wood item's weight.
+
+The inventory can now store items and manage their quantities, weights and grid positions, but there is not yet a visual interface for organising them.
+
+### Next Steps — Sprint 3
+
+For Sprint 3, I plan to implement the visual inventory interface.
+
+I will start by creating an 8×6 inventory grid that displays the items currently stored in the player's inventory.
+
+I will then add item icons or 3D previews, along with quantity indicators for stacked items.
+
+After this, I plan to implement drag-and-drop functionality so items can be moved around the grid.
+
+I will also add item rotation, allowing larger items to be rotated to fit into different spaces.
+
+Finally, I will work on stack splitting and merging, along with a visual indicator showing the inventory's current weight and maximum capacity.
