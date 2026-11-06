@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a92bc6dc5c5de2439875ec1eac77c94, type: 3}
   m_Name: Wood
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Wood Log
   icon: {fileID: 0}
-  worldPrefab: {fileID: 0}
+  worldModel: {fileID: 8549557101226758196, guid: 07d82876887d266469439643fee78a8b,
+    type: 3}
   weight: 0
   maxStackSize: 50
   gridSize: {x: 1, y: 1}

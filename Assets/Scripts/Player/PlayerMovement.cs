@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 movement;
     private Quaternion targetRotation;
 
-    // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -27,7 +26,6 @@ public class PlayerMovement : MonoBehaviour
         targetRotation = rb.rotation;
     }
 
-    // Update is called once per frame
     void Update()
     {
         float horizontal = 0f;

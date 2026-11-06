@@ -15,10 +15,16 @@ public class ChunkManager : MonoBehaviour
     GameObject newChunk;
     [SerializeField] private int renderDistance = 1;
 
+    [SerializeField] private GameObject treePrefab;
+    [SerializeField] private int treesPerChunk = 1;
+    [SerializeField] private float treeSpacing = 2f;
+    [SerializeField, Range(0f, 1f)] private float treeSpawnChance = 0.4f;
+    [SerializeField] private int worldSeed = 12345;
+
+    Dictionary<Vector2Int, HashSet<int>> destroyedTrees = new Dictionary<Vector2Int, HashSet<int>>();
+
     // while the spawned objects are called "chunks", they're actually ground tiles
 
-
-    // Start is called before the first frame update
     void Start()
     {
         playerPosition = playerTransform.position;
@@ -30,7 +36,6 @@ public class ChunkManager : MonoBehaviour
         GenerateSurroundingChunks(); // spawns the other 8 chunks around it
     }
 
-    // Update is called once per frame
     void Update()
     {
         playerPosition = playerTransform.position;
@@ -42,6 +47,7 @@ public class ChunkManager : MonoBehaviour
         {
             Debug.Log("Entered new chunk");
             chunkCoordinates = playerCoordinates;
+
             if (!generatedChunks.ContainsKey(chunkCoordinates)) // generates new chunk if there isn't already a matching chunk in the dictionary
             {
                 SpawnChunk(chunkCoordinates);
@@ -54,11 +60,96 @@ public class ChunkManager : MonoBehaviour
 
     void SpawnChunk(Vector2Int coordinates)
     {
-        Vector3 spawnPosition = new Vector3(coordinates.x * chunkSize + chunkSize / 2f, 0f, coordinates.y * chunkSize + chunkSize / 2f );
+        Vector3 spawnPosition = new Vector3(coordinates.x * chunkSize + chunkSize / 2f, 0f, coordinates.y * chunkSize + chunkSize / 2f);
 
         GameObject newChunk = Instantiate(groundTile, spawnPosition, Quaternion.identity);
 
         generatedChunks.Add(coordinates, newChunk);
+
+        SpawnTrees(coordinates, newChunk);
+    }
+
+    void SpawnTrees(Vector2Int coordinates, GameObject chunk)
+    {
+        if (treePrefab == null || treesPerChunk <= 0 || chunkSize <= 1f)
+        {
+            return;
+        }
+
+        // same seed for the same chunk, so the trees won't move around when coming back
+        int seed = unchecked(worldSeed + coordinates.x * 73856093 + coordinates.y * 19349663);
+        System.Random random = new System.Random(seed);
+
+        if (random.NextDouble() > treeSpawnChance) // some chunks won't have trees
+        {
+            return;
+        }
+
+        List<Vector3> positions = new List<Vector3>();
+
+        for (int i = 0; i < treesPerChunk; i++)
+        {
+            for (int attempt = 0; attempt < 20; attempt++)
+            {
+                float x = 0.5f + (float)random.NextDouble() * (chunkSize - 1f);
+                float z = 0.5f + (float)random.NextDouble() * (chunkSize - 1f);
+
+                Vector3 position = new Vector3(coordinates.x * chunkSize + x, 0f, coordinates.y * chunkSize + z);
+
+                bool tooClose = false;
+
+                foreach (Vector3 otherPosition in positions)
+                {
+                    if (Vector3.Distance(position, otherPosition) < treeSpacing)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose)
+                {
+                    positions.Add(position);
+
+                    // still generate the position even if this tree was destroyed before
+                    if (!IsTreeDestroyed(coordinates, i))
+                    {
+                        float rotation = (float)random.NextDouble() * 360f;
+
+                        GameObject tree = Instantiate(treePrefab, position, Quaternion.Euler(0, rotation, 0), chunk.transform);
+
+                        Tree treeScript = tree.GetComponent<Tree>();
+
+                        if (treeScript != null)
+                        {
+                            treeScript.SetTreeInfo(this, coordinates, i);
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    bool IsTreeDestroyed(Vector2Int coordinates, int treeID)
+    {
+        if (destroyedTrees.ContainsKey(coordinates))
+        {
+            return destroyedTrees[coordinates].Contains(treeID);
+        }
+
+        return false;
+    }
+
+    public void RegisterDestroyedTree(Vector2Int coordinates, int treeID)
+    {
+        if (!destroyedTrees.ContainsKey(coordinates))
+        {
+            destroyedTrees.Add(coordinates, new HashSet<int>());
+        }
+
+        destroyedTrees[coordinates].Add(treeID); // remember this tree was chopped down
     }
 
     void GenerateSurroundingChunks()
@@ -88,7 +179,7 @@ public class ChunkManager : MonoBehaviour
             if (Mathf.Abs(coordinates.x - chunkCoordinates.x) > renderDistance ||
                 Mathf.Abs(coordinates.y - chunkCoordinates.y) > renderDistance)
             {
-                Destroy(chunk.Value);
+                Destroy(chunk.Value); // trees get removed too since they're children of the chunk
                 chunksToRemove.Add(coordinates);
             }
         }
