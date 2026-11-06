@@ -277,6 +277,8 @@ I also changed the property to use `Texture`, allowing both regular images and R
 
 Each item now displays its preview with a quantity indicator in the bottom-right corner.
 
+<img width="291" height="152" alt="Screenshot 2026-11-06 233253" src="https://github.com/user-attachments/assets/f7bfc3f7-9060-424f-bab5-6984e7f0735e" />
+
 ### Inventory Interactions
 
 After creating the visual grid, I worked on allowing the player to organise items.
@@ -285,7 +287,7 @@ I added drag-and-drop functionality to move items between grid positions.
 
 I also added the ability to rotate items by pressing R while dragging them. This allows items with different grid dimensions to fit into different spaces.
 
-I added right-click stack splitting and the ability to merge matching stacks by dragging them onto each other.
+I added right-click stack splitting and the ability to merge matching stacks by dragging them onto each other
 
 I also created a tooltip that displays an item's name, quantity and description when the mouse is hovering over it.
 
@@ -304,6 +306,8 @@ Finally, I added TextMeshPro instructions to explain the controls for moving, ro
 One problem I encountered was that the inventory grid was not appearing when I opened the interface.
 
 I found that I had forgotten to call the `CreateGrid()` method when the game started. After fixing this, all 48 cells appeared correctly.
+
+<img width="438" height="390" alt="Screenshot 2026-11-06 231800" src="https://github.com/user-attachments/assets/8d9daa29-de4a-4542-9608-a43ce1f6ec93" />
 
 Another issue was displaying the 3D item previews. I initially had problems with the Render Texture background and the texture becoming black during Play Mode.
 
@@ -325,9 +329,11 @@ I confirmed that the collected items appeared in the grid with their quantities.
 
 I also checked that the custom Render Texture previews displayed correctly and that the starting axe was added to the inventory.
 
-I tested the inventory controls by moving items between cells, rotating them, splitting stacks and merging matching items.
+I tested the inventory controls by moving items between cells, rotating them, splitting stacks and merging matching items
 
 I also checked the item tooltips and weight indicator.
+
+<img width="645" height="487" alt="Screenshot 2026-11-06 233250" src="https://github.com/user-attachments/assets/d89a641d-bb0f-445f-9006-da46809530d4" />
 
 ### Sprint 3 Reflection
 
