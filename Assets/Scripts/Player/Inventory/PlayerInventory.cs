@@ -4,8 +4,9 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
+    [SerializeField] private ItemData startingAxe;
 
-    void Start()
+    void Awake()
     {
         if (inventory == null)
         {
@@ -13,32 +14,46 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        if (inventory == null)
+        {
+            Debug.LogError("Player is missing an Inventory component!");
+            return;
+        }
+
+        if (startingAxe == null)
+        {
+            Debug.LogError("Starting Axe has not been assigned!");
+            return;
+        }
+
+        int remaining = inventory.AddItem(startingAxe, 1);
+
+        if (remaining == 0)
+        {
+            Debug.Log("Player started with an axe!");
+        }
+        else
+        {
+            Debug.LogError("Could not add starting axe to inventory!");
+        }
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            if (inventory != null)
-            {
-                inventory.PrintInventory(); // temporary way to check the inventory
-            }
+            inventory.PrintInventory();
         }
     }
 
     public int CollectItem(ItemData item, int quantity)
     {
-        if (inventory == null || item == null)
-        {
-            return quantity;
-        }
+        if (inventory == null) return quantity;
 
         int remaining = inventory.AddItem(item, quantity);
-        int collected = quantity - remaining;
-
-        if (collected > 0)
-        {
-            Debug.Log("Picked up " + collected + " " + item.itemName);
-        }
-
+        Debug.Log("Collected " + (quantity - remaining) + " " + item.itemName);
         return remaining;
     }
 }
