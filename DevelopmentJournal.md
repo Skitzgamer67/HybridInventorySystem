@@ -250,3 +250,96 @@ After this, I plan to implement drag-and-drop functionality so items can be move
 I will also add item rotation, allowing larger items to be rotated to fit into different spaces.
 
 Finally, I will work on stack splitting and merging, along with a visual indicator showing the inventory's current weight and maximum capacity.
+
+## Sprint 3 — Inventory User Interface
+
+### Development
+
+I started Sprint 3 by creating the visual interface for the inventory system that I implemented during Sprint 2.
+
+I created an `InventoryCanvas`, `InventoryPanel` and `InventoryGrid` in Unity. I then created an `InventoryUI` script to manage the interface.
+
+The inventory opens and closes using the Tab key. I used nested `for` loops to automatically generate an 8×6 grid containing 48 cells.
+
+Each item is displayed based on its position and size stored in the `InventorySlot` class.
+
+### Item Previews
+
+Initially, I displayed items using coloured rectangles with their names and quantities.
+
+I wanted the inventory to display the actual appearance of each item instead, so I started experimenting with Render Textures.
+
+I created a separate camera that renders 3D models into a texture. This allowed me to manually arrange the models to create the appearance I wanted for each item.
+
+I added a `previewTexture` property to `ItemData` so different items could have their own inventory previews.
+
+I also changed the property to use `Texture`, allowing both regular images and Render Textures to be assigned through Unity's Inspector.
+
+Each item now displays its preview with a quantity indicator in the bottom-right corner.
+
+### Inventory Interactions
+
+After creating the visual grid, I worked on allowing the player to organise items.
+
+I added drag-and-drop functionality to move items between grid positions.
+
+I also added the ability to rotate items by pressing R while dragging them. This allows items with different grid dimensions to fit into different spaces.
+
+I added right-click stack splitting and the ability to merge matching stacks by dragging them onto each other.
+
+I also created a tooltip that displays an item's name, quantity and description when the mouse is hovering over it.
+
+### Weight Display and Starting Equipment
+
+I added a weight indicator to the inventory interface, showing the current weight of the stored items.
+
+This uses the weight calculations already implemented in Sprint 2.
+
+I also updated the `PlayerInventory` script so the player starts with an axe.
+
+Finally, I added TextMeshPro instructions to explain the controls for moving, rotating and organising items.
+
+### Challenges and Problem-Solving
+
+One problem I encountered was that the inventory grid was not appearing when I opened the interface.
+
+I found that I had forgotten to call the `CreateGrid()` method when the game started. After fixing this, all 48 cells appeared correctly.
+
+Another issue was displaying the 3D item previews. I initially had problems with the Render Texture background and the texture becoming black during Play Mode.
+
+I found that an earlier preview rendering script was disabling the camera. After correcting the camera setup, the Render Texture displayed correctly.
+
+I also noticed that item previews could become stretched when an item occupied more than one grid cell.
+
+To address this, I used an `AspectRatioFitter` to preserve the image's original proportions.
+
+When implementing the starting axe, I encountered a `NullReferenceException` because the `PlayerInventory` script was not correctly referencing the `Inventory` component.
+
+I fixed this by using `GetComponent<Inventory>()` to retrieve the component from the player.
+
+### Testing
+
+I tested the inventory interface by collecting wood logs and opening the inventory using Tab.
+
+I confirmed that the collected items appeared in the grid with their quantities.
+
+I also checked that the custom Render Texture previews displayed correctly and that the starting axe was added to the inventory.
+
+I tested the inventory controls by moving items between cells, rotating them, splitting stacks and merging matching items.
+
+I also checked the item tooltips and weight indicator.
+
+### Sprint 3 Reflection
+
+During Sprint 3, I created the visual interface for the inventory system and connected it to the backend from Sprint 2.
+
+One of the main things I learned was how to use RectTransforms to position UI elements and generate inventory cells through code.
+
+I also learned how Render Textures can be used to display 3D models inside Unity's UI.
+
+Working on the inventory interactions helped me understand how mouse input can be used to move and organise items within a grid.
+
+I also gained more experience debugging problems involving component references and Inspector settings.
+
+The inventory now has a visual interface for displaying and organising items, along with quantity indicators, tooltips and a weight display.
+
