@@ -16,6 +16,6 @@ MonoBehaviour:
   icon: {fileID: 0}
   worldModel: {fileID: 8549557101226758196, guid: 07d82876887d266469439643fee78a8b,
     type: 3}
-  weight: 0
+  weight: 0.5
   maxStackSize: 50
   gridSize: {x: 1, y: 1}
