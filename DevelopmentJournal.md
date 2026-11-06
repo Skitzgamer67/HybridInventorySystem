@@ -127,6 +127,8 @@ After implementing resource drops, I expanded the `ChunkManager` script to gener
 
 Initially, I had several trees spawning in each chunk, but this caused the trees to overlap and made the environment look too crowded.
 
+<img width="987" height="625" alt="Screenshot 2026-11-06 164148" src="https://github.com/user-attachments/assets/d03fc815-bcae-4629-a07f-7c87857797f5" />
+
 To improve this, I reduced the number of trees per chunk and added a configurable spawn chance. This allows some chunks to generate without trees, making the environment less crowded.
 
 I also added a `worldSeed` variable and used `System.Random` to generate consistent tree positions based on each chunk's coordinates.
@@ -181,6 +183,8 @@ Initially, the player had to press E while standing near a dropped item to colle
 
 I later changed this to an automatic pickup system.
 
+<img width="570" height="351" alt="Screenshot 2026-11-05 225054" src="https://github.com/user-attachments/assets/98fe3dee-ea7a-480d-9348-627baec345f0" />
+
 When the player moves within a configurable range, the dropped item moves towards the player using `Vector3.MoveTowards()`.
 
 I also added a shrinking effect so the item gradually becomes smaller while moving towards the player.
@@ -195,6 +199,8 @@ I also added floating text labels above dropped items using TextMeshPro.
 
 The labels display the item's name and quantity, such as `Wood Log x7`.
 
+<img width="556" height="229" alt="Screenshot 2026-11-06 201106" src="https://github.com/user-attachments/assets/93876f1e-cb6e-4de7-ac07-5ac8b06d4e72" />
+
 The text is generated using the information stored in the item's `ItemData` and the pickup's quantity.
 
 I made the labels face the camera so they remain readable from the game's isometric perspective.
@@ -208,6 +214,8 @@ I tested the resource drop system by destroying trees and checking that wood log
 I also tested procedural tree generation by moving between chunks and returning to previously visited areas. The trees retained their original positions, and destroyed trees did not respawn.
 
 For the inventory, I collected multiple wood pickups and checked the results using messages printed to Unity's Console.
+
+<img width="342" height="198" alt="Screenshot 2026-11-06 181914" src="https://github.com/user-attachments/assets/78c04e80-9479-46c5-8247-be1db1162db4" />
 
 I confirmed that items of the same type were combined into stacks and that the inventory stored their quantities and grid positions.
 
