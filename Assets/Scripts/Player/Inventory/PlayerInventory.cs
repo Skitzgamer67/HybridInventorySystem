@@ -4,8 +4,6 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
-    [SerializeField] private float pickupRange = 2f;
-    [SerializeField] private KeyCode pickupKey = KeyCode.E;
 
     void Start()
     {
@@ -17,64 +15,30 @@ public class PlayerInventory : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(pickupKey))
-        {
-            PickupNearestItem();
-        }
-
         if (Input.GetKeyDown(KeyCode.I))
         {
-            inventory.PrintInventory(); // temporary way to check what was picked up
+            if (inventory != null)
+            {
+                inventory.PrintInventory(); // temporary way to check the inventory
+            }
         }
     }
 
-    void PickupNearestItem()
+    public int CollectItem(ItemData item, int quantity)
     {
-        if (inventory == null)
+        if (inventory == null || item == null)
         {
-            return;
+            return quantity;
         }
 
-        ItemPickup[] pickups = FindObjectsOfType<ItemPickup>();
+        int remaining = inventory.AddItem(item, quantity);
+        int collected = quantity - remaining;
 
-        ItemPickup nearestItem = null;
-        float nearestDistance = pickupRange;
-
-        foreach (ItemPickup pickup in pickups)
+        if (collected > 0)
         {
-            float distance = Vector3.Distance(transform.position, pickup.transform.position);
-
-            if (distance <= nearestDistance)
-            {
-                nearestDistance = distance;
-                nearestItem = pickup;
-            }
+            Debug.Log("Picked up " + collected + " " + item.itemName);
         }
 
-        if (nearestItem == null)
-        {
-            return;
-        }
-
-        int originalQuantity = nearestItem.quantity;
-        int remaining = inventory.AddItem(nearestItem.item, originalQuantity);
-        int collected = originalQuantity - remaining;
-
-        if (collected <= 0)
-        {
-            Debug.Log("Inventory is full or too heavy");
-            return;
-        }
-
-        Debug.Log("Picked up " + collected + " " + nearestItem.item.itemName);
-
-        if (remaining <= 0)
-        {
-            Destroy(nearestItem.gameObject);
-        }
-        else
-        {
-            nearestItem.quantity = remaining; // leave whatever couldn't fit on the ground
-        }
+        return remaining;
     }
 }
